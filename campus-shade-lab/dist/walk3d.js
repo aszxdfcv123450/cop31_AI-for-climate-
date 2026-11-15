@@ -457,7 +457,10 @@
       blockers = [];
       flat(vertices, -350, -350, WIDTH + 700, DEPTH + 700, -.15, "#a7bb83", 1);
       flat(vertices, 0, 0, WIDTH, DEPTH, 0, "#b5c789", campus.image ? 4 : 1);
-      const { buildings = [], groves = [], shelters = [], pavilions = [], field } = scenery;
+      const { buildings = [], groves = [], shelters = [], pavilions = [], plazas = [], field } = scenery;
+      for (const { x, y, w, h } of plazas) {
+        flat(vertices, x, y, w, h, .08, "#e5d4ac", 7);
+      }
       if (field) {
         const { x, y, w, h } = field;
         flat(vertices, x - 5, y - 5, w + 10, h + 10, .019, "#aa7863", 1);
@@ -541,7 +544,7 @@
       const nextKey = JSON.stringify([campus.name, campus.demo, campus.image?.length ?? 0,
         campus.nodes?.map(({ id, x, y }) => [id, x, y]), options.start]);
       const nextSceneKey = JSON.stringify([nextKey, campus.edges, scenery.buildings,
-        scenery.groves, scenery.shelters, scenery.pavilions, scenery.field]);
+        scenery.groves, scenery.shelters, scenery.pavilions, scenery.plazas, scenery.field]);
       const nextShadowKey = JSON.stringify([nextSceneKey, options.minute, options.lightLux, options.showShade]);
       const nextRouteKey = JSON.stringify([nextKey, options.end, options.activeRoute, options.selected?.nodes,
         options.suggestions?.map(({ id, route }) => [id, route?.nodes]), options.nextIds]);

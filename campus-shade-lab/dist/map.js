@@ -44,7 +44,20 @@
 
   function drawScenery(layer, campus, hideExisting) {
     const { scenery = campus } = campus;
-    const { buildings = [], groves = [], shelters = [], field } = scenery;
+    const { buildings = [], groves = [], shelters = [], plazas = [], field } = scenery;
+
+    if (!hideExisting) {
+      for (const { x, y, w, h, label } of plazas) {
+        add(layer, "rect", {
+          x, y, width: w, height: h, rx: 2,
+          fill: "#e9dfc1", stroke: "#d8cbaa", "stroke-width": 1,
+        });
+        if (label) add(layer, "text", {
+          x: x + w / 2, y: y + h / 2 + 4, "text-anchor": "middle",
+          fill: "#6c5d41", "font-size": 12, "font-weight": 550,
+        }, label);
+      }
+    }
 
     if (!hideExisting && field && field.w > 0 && field.h > 0) {
       const { x, y, w, h } = field;

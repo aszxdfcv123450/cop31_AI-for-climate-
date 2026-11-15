@@ -24,7 +24,7 @@
   const validImage = /^data:image\/(?:png|jpeg|webp);base64,[a-zA-Z0-9+/=]+$/;
 
   let demo;
-  let aerialCampus;
+  let exampleCampus;
   let campus;
   let savedCampus;
   let draft;
@@ -139,25 +139,25 @@
     endInput.value = pair?.[1] ?? places[1].id;
     $("campus-name").textContent = campus.name;
     $("campus-address").textContent = campus.address || "未填写地址";
-    $("data-status").textContent = campus.demo ? "模拟校园" : campus.image ? "真实校园示例" : "已导入校园";
+    $("data-status").textContent = campus.demo ? "模拟校园" : campus === exampleCampus ? "校园布局示意" : "已导入校园";
     $("mode-2d").textContent = campus.image ? "航拍地图" : "平面地图";
     const attribution = $("map-source");
     attribution.replaceChildren();
-    if (campus.image) {
+    if (campus.sourceUrl || campus.sourceLabel || campus.shadeNote || campus.image) {
       if (campus.sourceUrl) {
         const link = element("a", campus.sourceLabel || "底图来源");
         link.href = campus.sourceUrl;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
         attribution.append(link);
-      } else {
+      } else if (campus.sourceLabel || campus.image) {
         attribution.append(document.createTextNode(campus.sourceLabel || "底图来自导入的校园资料"));
       }
-      attribution.append(document.createTextNode(" · " + (campus.shadeNote || "遮阴按录入的路段数据估算")));
+      if (attribution.hasChildNodes()) attribution.append(document.createTextNode(" · "));
+      attribution.append(document.createTextNode(campus.shadeNote || "遮阴按录入的路段数据估算"));
     }
-    attribution.hidden = !campus.image;
     tested = false;
-    activeRoute = "shade";
+    activeRoute = campus === exampleCampus ? "fast" : "shade";
     custom = [];
     customControls.open = false;
     model?.reset();
@@ -814,7 +814,7 @@
         ...(inRange(item.height, 1, 250) ? { height: item.height } : {}),
         ...(isText(item.kind, 30) ? { kind: item.kind } : {})
       });
-      const { buildings, groves, field } = source.scenery;
+      const { buildings, groves, plazas, field } = source.scenery;
       result.scenery = {
         buildings: Array.isArray(buildings) ? buildings.slice(0, 200).filter(box).map(safeBox) : [],
         groves: Array.isArray(groves) ? groves.slice(0, 300).filter(item => item &&
@@ -822,6 +822,7 @@
           .map(item => ({ x: item.x, y: item.y, r: item.r,
             ...(inRange(item.height, 1, 100) ? { height: item.height } : {}), ...(isText(item.kind, 30) ? { kind: item.kind } : {}) })) : []
       };
+      if (Array.isArray(plazas)) result.scenery.plazas = plazas.slice(0, 40).filter(box).map(safeBox);
       if (box(field)) result.scenery.field = safeBox(field);
     }
     return result;
@@ -836,7 +837,7 @@
   }
 
   function openEditor() {
-    const head = campus.demo || campus === aerialCampus
+    const head = campus.demo || campus === exampleCampus
       ? savedCampus || { name: "", address: "", nodes: [], edges: [] } : campus;
     loadDraft(head);
     editor.showModal();
@@ -1110,8 +1111,8 @@
   });
   $("simulate").addEventListener("click", showSimulation);
   $("open-real").addEventListener("click", () => {
-    if (!aerialCampus) return;
-    setCampus(aerialCampus);
+    if (!exampleCampus) return;
+    setCampus(exampleCampus);
     tested = true;
     renderTests();
   });
@@ -1206,7 +1207,7 @@
     $("model-source").hidden = viewMode !== "3d";
     $("model-source").textContent = campus?.modelNote || (campus?.demo
       ? "模拟校园 · 建筑和树木布局为示意。" : "地点与步道沿导入地图布置。建筑和树木需在校园数据中提供。");
-    $("map-source").hidden = viewMode === "3d" || !campus?.image;
+    $("map-source").hidden = viewMode === "3d" || !$("map-source").hasChildNodes();
     $("mode-3d").setAttribute("aria-pressed", String(viewMode === "3d"));
     $("mode-2d").setAttribute("aria-pressed", String(viewMode === "2d"));
     updatePlaybackControls();
@@ -1320,15 +1321,15 @@
       }
       try {
         const candidate = readCampusData("campus-real-data");
-        if (candidate.image && firstConnectedPair(candidate)) {
-          aerialCampus = candidate;
+        if (firstConnectedPair(candidate)) {
+          exampleCampus = candidate;
           $("open-real").hidden = false;
         }
       } catch (error) {
-        console.warn("Could not load the aerial campus", error);
+        console.warn("Could not load the campus example", error);
       }
       $("mode-3d").disabled = !model;
-      setCampus(savedCampus || aerialCampus || demo);
+      setCampus(savedCampus || exampleCampus || demo);
     } catch (error) {
       console.error("Could not initialize the campus", error);
       $("campus-name").textContent = "校园数据加载失败";

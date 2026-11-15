@@ -20,4 +20,4 @@ python3 -m http.server 8000 --directory dist
 
 ## 示例数据
 
-伯克利示例使用 [USDA NAIP 航拍影像](https://planetarycomputer.microsoft.com/dataset/naip)，并参考[伯克利校方校园地图](https://www.berkeley.edu/map/)。建筑外形与高度为重建估值，遮阴比例及费用用于演示。
+默认示例覆盖北京海淀清华大学主校区艺术博物馆到中央主楼一带，位置参照[清华大学校园地图](https://www.tsinghua.edu.cn/zjqh/xyfg/xydt.htm)。步道和建筑布局为近似重绘，距离、建筑高度、树冠、遮阴和费用均为演示估算。
