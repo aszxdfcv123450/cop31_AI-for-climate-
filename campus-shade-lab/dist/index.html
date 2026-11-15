@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="用校园地图规划并测试阴凉路线。">
 <title>校园阴凉路线实验室</title>
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 <script defer src="routes.js"></script>
 <script defer src="map.js"></script>
 <script defer src="walk3d.js?v=8"></script>
 <script defer src="budget.js"></script>
 <script defer src="playback.js"></script>
-<script defer src="app.js?v=8"></script>
+<script defer src="app.js?v=9"></script>
 </head>
 <body>
 <header class="top">
@@ -168,6 +168,7 @@
       <div class="budget-scenario">
         <div class="budget-list-head"><h3>改造清单</h3><span id="budget-count" class="muted"></span></div>
         <div id="budget-plan" aria-live="polite"></div>
+        <button class="outline budget-clear" id="budget-clear" type="button" disabled>全部删除</button>
         <div id="budget-impact" aria-live="polite"></div>
       </div>
     </div>

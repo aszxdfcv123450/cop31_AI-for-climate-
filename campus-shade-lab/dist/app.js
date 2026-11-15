@@ -550,6 +550,7 @@
     const list = $("budget-plan");
     list.replaceChildren();
     $("budget-count").textContent = budgetPlan.length + " 项";
+    $("budget-clear").disabled = !budgetPlan.length;
     if (!budgetPlan.length) list.append(element("p", "加入改造后，可查看预计少晒多久。", "muted"));
     for (const item of budgetPlan) {
       const option = budgetOptions.get(item.optionId);
@@ -659,6 +660,13 @@
   });
   $("budget-option").addEventListener("change", finishPlacement);
   $("budget-edge").addEventListener("change", renderBudgetControls);
+  $("budget-clear").addEventListener("click", () => {
+    placementTool = null;
+    lastPlant = null;
+    coverageSelection = null;
+    updateBudgetPlan([]);
+    $("budget-option").focus({ preventScroll: true });
+  });
   $("budget-before").addEventListener("click", () => {
     finishPlacement();
     setBudgetView(false);

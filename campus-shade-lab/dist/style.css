@@ -148,6 +148,7 @@ dialog::backdrop{background:#182a23a6}
 .budget-line strong,.budget-line small{display:block;overflow-wrap:anywhere}
 .budget-line strong{font-size:13px}
 .budget-line button{min-width:26px}
+.budget-clear{justify-self:end}
 .budget-impact{padding:9px 10px;background:#f3f4e9;border-radius:8px}
 .budget-impact h3{font-size:13px}
 .budget-impact table{margin-top:2px}
